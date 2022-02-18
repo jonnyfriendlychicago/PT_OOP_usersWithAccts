@@ -1,96 +1,160 @@
-class User:
+"""There are two classes in this script: Customer and BankAccount.  """
+
+class Customer:
     # bank_name = "First National Dojo"
     # all_accounts = []
 
+    """ below methods are mere print text, to diplay in terminal, for viewer ease.  These two methods are called upon by all downstread methods """
+    def transactionHeader (self):
+        print("\\\Transaction Begin ---------------------- \\\ ")
+
+    def transactionFooter (self):
+        print("// ---------------------- Transaction End  //")
+
+    """below method is invoked by various transactions.  It basically prints the type of transaction that is being initiated."""
+    def transTypeAffirmation (self, transType):
+        print(f"New {transType} initiated.")
+
+    """below method prints vital elements of the customer object.  This is invoked by virtually all downstream calls.  
+    It affirms which customer is being affected by an activity (like a deposit) """
+    def customerAffirmation (self):
+        # self.acct_num = acct_num
+        print(f"Customer Num: {self.cust_num} | Customer Name: {self.name} | Email: {self.email}")
+    
+    """ below method initiates the customerAccount object.  read comments therein for various descriptive detail"""
     def __init__(self, cust_num, name, email):
+        # JRF note to self: here we should have some error checking logic: if cust_num or email already exists, send error message.  this will require reactivation of the "All_accounts = []" list, I think
         self.cust_num = cust_num
         self.name = name
         self.email = email
-        self.accountList = []
-        print(f"// Transaction Begin \\\ \nCustomer account created. \nCustomer Num: {self.cust_num} | Customer Name: {self.name} \nEmail: {self.email} \n\\\ Transaction End   //")
+        # jrf note to self: here create a bunch of fields for the customer, and set to "", to be populated with downstream calls. 
+        """ this accountList list below is SUPER IMPORTANT: it's what enables the entire organization of separate/distinct/callable bank accounts"""
+        self.accountList = [] # this shall be an list of all **account** objects (dictionaries) that shall be created/associated to this cust.  VI: list is on the object, not on the overall class
+        """ one more time: accountList above... super important!  write it on your hand with a pen if you need to."""
+        self.transactionHeader()
+        transType = "Customer Account"
+        # self.transTypeAffirmation(transType) # this code is fine, but not what I want it to be for right now, so leave out for now.
+        print(f"New Customer Account created.") # this msg affirms in terminal that attempt was successful. 
+        self.customerAffirmation()
+        self.transactionFooter()
     
-    def transaction_footer (self):
-        print("\\\ Transaction End   //")
-
-    def createAccount (self, acct_type, acct_num):
-        self.acct_type = acct_type        
-        print(f"// Transaction Begin \\\ ")
-        print(f"Financial account created.  \nCustomer Num: {self.cust_num} | Customer Name: {self.name} | Account Num: {acct_num}")
-        my_acct = BankAccount(acct_type, acct_num, balance=0)
-        self.accountList.append(my_acct)
+    """below method initiates the init method on the BankAccount class, thereby creating a financialAccount object, specifically joined to a Customer account object.  it is invoked by this call: 
+    a1.createFinancialAccount("Checking", 123)    """
+    def createFinancialAccount (self, acct_type, acct_num):
+        self.acct_type = acct_type # sets the internal variable       
         """
-        JRF note to self: get some if/else stuff to see if acctNumb already exists, and errror if so. 
+        JRF note to self: get some if/else stuff to see if acctNumb already exists, and errror if so. also, if type is not checking or savings, that should error also.  
         """
-        # self.accountList.append(acct_num)
-        # BankAccount(acct_type, acct_num, balance=0)
-        self.transaction_footer()
+        self.transactionHeader()
+        transType = "Financial Account"
+        self.transTypeAffirmation(transType)
+        self.customerAffirmation()
+        # my_acct = BankAccount(acct_type, acct_num, balance=0) # establishes 'my_acct' as var for class-init function for BankAccount 
+        my_acct = BankAccount(acct_type, acct_num) # establishes 'my_acct' as var for class-init function for BankAccount 
+        self.accountList.append(my_acct)    # accomplishes two things in one action: 
+                                                #(1) this adds the about-to-be-created instance/object to the accountList list that exists for this customer acct 
+                                                #(2) inherently runs that class-init function, using the var pushed into in from the call.  see init function in the BankAccount class code further in script. 
+        self.transactionFooter()
         return self
-    
-    def transaction_header (self, acct_num):
-        self.acct_num = acct_num
-        print(f"// Transaction Begin \\\ \nCustomer Name: {self.name} | Customer Num: {self.cust_num} | Account Num: {self.acct_num}")
 
-    # a1.make_deposit(987, 20)
+    """below method does not create an object; rather, it initiates the deposit method that exists within the BankAccount class.  see bankAccount class code further in script. 
+    """
     def make_deposit(self, acct_num, amount):
         #self.accountList = []
         # [BankAcct1, BankAcct2]
+        self.transactionHeader()
+        transType = "deposit"
+        self.transTypeAffirmation(transType)
+        accountFound = False # accountFound is an internal variable, set to False at start.  In other words, we start by saying the account can't be found, then update the var if/when it is found
         for accountObject in self.accountList: 
             if accountObject.acct_num == acct_num:
-                self.transaction_header(acct_num)
-                print(f'found account {acct_num}, depositing ${amount}')
+                # JRF note to self: would like to have additional logic above that validates both the Customer as well as the account number, but not 100% sure that's needed
+                accountFound = True # we found the account!  so, we set the var = True.  that way, the "not found" error message never gets invoked, see couple lines down. 
+                self.customerAffirmation()
                 accountObject.deposit(acct_num, amount)
-                self.transaction_footer()
-            """
-            JRF note to self: need an else statement here! 
-            """
-            # else: 
-            #     print("Account Number provided in invalid.")
-        # self.acct_num = acct_num
-        
-        # print(f"self.account.balance: {self.account.balance}")
-        # print('looking at the user account(s)')
-        # print(self.account.acct_type)
-        # print(self.account.acct_num)
-        
-        
-        return self
-class BankAccount:
-    # accounts = []
-    def __init__(self, acct_type, acct_num, balance):
-        self.acct_type = acct_type
-        self.acct_num = acct_num
-        if acct_type == "Checking": 
-            x = 0.02
-        else: 
-            x = 0.03
-        self.int_rate = x
-        self.balance = balance
-        self.int_rate_display = self.int_rate * 100
-        # print(f"Account Type: {self.acct_type}")
-        print(f"Current balance is ${self.balance} with a current interest rate of {self.int_rate_display}%.")
-        # return None
-    def display_account_info (self, acct_num):
-        self.acct_num = acct_num
-        # print("this is the display_account_info funct")
-        print(f"Account Balance: ${self.balance}")
-        # return self    
-    #acct_num = 123
-    def deposit (self, acct_num, amount): 
-        ## if self.acct_num = acct_num: do somethin
-        self.balance += amount
-        print(f"Deposit accepted: ${amount}.")
-        self.display_account_info(acct_num)
+        displayAmount = "{:,}".format(amount) # this is a display variable, so that amounts are displayed with commas.  do this throughout the script, not just here. 
+        if accountFound == False: #this only occurs if no accountObject located in the forLoop above
+            print(f"Deposit failed: cannot locate account number: {acct_num}.  ${displayAmount} deposit has not occurred.")
+        self.transactionFooter()
 
-        # if self.acct_num == acct_num:
-        #     self.balance += amount
-        #     print(f"Deposit accepted: ${amount}.")
-        #     self.display_account_info(acct_num)
         # else: 
         #     print("Account Number provided in invalid.")
         # self.acct_num = acct_num
-        # print(f"example text Account Class self.acct_num: {self.acct_num}")
-
+        
+        # print(f"self.account.balance: {self.account.balance}")
+        # print('looking at the Customer account(s)')
+        # print(self.account.acct_type)
+        # print(self.account.acct_num)
         return self
+
+class BankAccount:
+    # accounts = []
+    # def __init__(self, acct_type, acct_num, balance):
+    
+    """ below method invoked by all transactions.  affirms the acct num and type that transactions are affecting"""
+    def accountAffirmation (self, acct_num):
+        self.acct_num = acct_num
+        print(f"Account Number: {self.acct_num} | Account Type: {self.acct_type}")
+    
+    """ below is invoked by the account creation method, and can also be invoked individually by an accountbalanceLookup method, which I will build later. """
+    def accountDetails (self, acct_num):
+        self.acct_num = acct_num
+        print(f"Current balance is ${self.balance} with a current interest rate of {self.int_rate_display}%.")
+    
+    """ below is invoked by the deposit method """
+    def accountBalance (self, acct_num):
+        self.acct_num = acct_num
+        print(f"Account Balance: ${self.balance}")
+        
+    """ below init method creates the bankAccount object.  it is called by a method in the Customer class."""
+    def __init__(self, acct_type, acct_num):
+        self.acct_type = acct_type
+        self.acct_num = acct_num
+        self.balance = 0 # all finAccounts objects start with a balance of zero.  that goes up/down when finTrans start occurring
+        if acct_type == "Checking": #setting the interest rate depending on account type.  Could this also be done with a parent/child set-up??  maybe try that later. 
+            self.int_rate = 0.02
+        else: 
+            self.int_rate = 0.03
+        self.int_rate_display = self.int_rate * 100 # this is purely for cosmetics in the terminal window
+        print("New Financial Account created.") # affirms that the attemped account creation occurred successfull
+        self.accountAffirmation (acct_num) # see method above
+        self.accountDetails(acct_num)  # see method above
+        # return None
+    
+    def deposit (self, acct_num, amount): 
+        self.balance += amount
+        self.accountAffirmation(acct_num)
+        print(f"Deposit accepted: ${amount}.")
+        self.accountBalance(acct_num)
+        return self
+
+# BankAccount.print_all_accounts()
+
+a1 = Customer("ABC", "Lucky Day", "lucky@3amigos.com")
+a1.createFinancialAccount("Checking", 123)
+a1.make_deposit(123, 1)
+a1.make_deposit(123, 2)
+a1.createFinancialAccount("Savings", 987)
+a1.make_deposit(987, 100)
+a1.make_deposit(313, 10_000_000) #this account doesn't exist / won't exist.  this shows what happens when you send an acct_num that hasn't been created yet. 
+
+a2 = Customer("DEF", "Dusty Bottoms", "dusty@3amigos.com")
+a2.createFinancialAccount("Checking", 219) # this big list of accounts shows how you can create wide range of accounts. 
+a2.createFinancialAccount("Savings", 924)
+a2.createFinancialAccount("Savings", 376)
+a2.createFinancialAccount("Checking", 773)
+a2.createFinancialAccount("Checking", 847)
+a2.make_deposit(219, 1000)
+a2.make_deposit(219, 5000)
+
+a3 = Customer("GHI", "Ned Nederlander", "ned@3amigos.com")
+# no other tests for a3 yet, we good for now.
+
+"""
+All of below is more stuff I want to get back to!!!!!!!! - JRF 2022.02.18
+
+"""
+
 
 """
     def withdraw (self, amount):
@@ -98,12 +162,12 @@ class BankAccount:
             self.old_balance = self.balance
             self.balance -= 5
             print(f"Insufficient funds.  You tried to withdraw ${amount} but your balance was only ${self.old_balance}.  For even attempting that, we just charged you a completely unjustifiable $5 fee... and you cant do jack about it.")
-            self.display_account_info()
+            self.accountBalance()
             # print(f"Balance: ${self.balance}")
         else: 
             self.balance -= amount
             print(f"Withdrawl completed: ${amount} ")
-            self.display_account_info()
+            self.accountBalance()
             # print(f"Balance: ${self.balance}")
         return self
 
@@ -112,11 +176,11 @@ class BankAccount:
             self.int_added = self.balance * self.int_rate
             self.balance =  self.int_added + self.balance
             print(f"Interest yield added to account in the amount: ${self.int_added}.")
-            self.display_account_info()
+            self.accountBalance()
             # print(f"Balance: ${self.balance}")
         else: 
             print(f"No interest yield payment: account balance less than or equal to zero.")
-            self.display_account_info()
+            self.accountBalance()
             # print(f"Balance: ${self.balance}")
         return self
 """
@@ -127,7 +191,7 @@ class BankAccount:
     def print_all_accounts(cls):
         print("List of all account balances:::::::::::::::::::")
         for x in cls.accounts:
-            x.display_account_info()
+            x.accountBalance()
     
     @classmethod
     def all_balances(cls):
@@ -138,25 +202,26 @@ class BankAccount:
 
 """
 
-# BankAccount.print_all_accounts()
 
-a1 = User("ABC", "Lucky Day", "lucky@3amigos.com")
-# a2 = User("DEF", "Dusty Bottoms", "dusty@3amigos.com")
-# a3 = User("GHI", "Ned Nederlander", "ned@3amigos.com")
-
-a1.createAccount("Checking", 123)
+"""
 # print(a1.account)
-a1.createAccount("Savings", 987)
+
 
 # print(a1.accountList)
+"""
 
-a1.make_deposit(123, 1)
-a1.make_deposit(987, 100)
-a1.make_deposit(123, 2)
-a1.make_deposit(123, 2)
-a1.make_deposit(987, 200)
-a1.make_deposit(987, 300)
 
+
+
+# a1.make_deposit(987, 200)
+
+
+
+
+
+
+
+"""
 # print(a1.accountList[0].balance)
 
 for account in a1.accountList:
@@ -165,7 +230,7 @@ for account in a1.accountList:
     print(f'This is my account balance: {account.balance}')
     print('============================================')
 
-
+"""
 
 
 
@@ -175,50 +240,50 @@ for account in a1.accountList:
 # a1.make_deposit(123, 2)
 # a1.make_deposit(123, 3)
 # .make_deposit(123, 200).make_deposit(123, 300)
-# .make_deposit(43).make_deposit(53).make_withdrawal(130).yield_interest().display_user_balance()
+# .make_deposit(43).make_deposit(53).make_withdrawal(130).yield_interest().display_Customer_balance()
 
 # a1.account.deposit(987, 5000)
 
 
 """
     def make_withdrawal(self, amount):	# takes an argument that is the amount of the deposit
-        # self.account_balance += amount	# the specific user's account increases by the amount of the value received
+        # self.account_balance += amount	# the specific Customer's account increases by the amount of the value received
         # above replaced with below... work in progress
         # self.account = BankAccount(acct_num = 123, int_rate=0.05, balance=0)
-        self.transaction_header()
+        self.customerAffirmation()
         self.account.withdraw(amount)
-        self.transaction_footer()
+        self.transactionFooter()
         return self
 
     # def make_withdrawal(self, amount):
-    # # have this method decrease the user's balance by the amount specified
+    # # have this method decrease the Customer's balance by the amount specified
     #     self.account_balance -= amount
     #     return self
 
-    def display_user_balance(self): 
-        # self.balance_display = print(f"User: {self.name}, Balance: ${self.account_balance}")
+    def display_Customer_balance(self): 
+        # self.balance_display = print(f"Customer: {self.name}, Balance: ${self.account_balance}")
         # above replaced by below
-        self.transaction_header()
-        self.account.display_account_info()
-        self.transaction_footer()
+        self.customerAffirmation()
+        self.account.accountBalance()
+        self.transactionFooter()
         return self
     
     def yield_interest(self): 
-        # self.balance_display = print(f"User: {self.name}, Balance: ${self.account_balance}")
+        # self.balance_display = print(f"Customer: {self.name}, Balance: ${self.account_balance}")
         # above replaced by below
-        self.transaction_header()
+        self.customerAffirmation()
         self.account.yield_interest()
-        self.transaction_footer()
+        self.transactionFooter()
         return self
 
 
-    def transfer_money(self, other_user, amount): 
+    def transfer_money(self, other_Customer, amount): 
         self.account_balance -= amount
-        other_user.account_balance += amount
-        self.balance_display = print(f"User: {self.name}, Balance: ${self.account_balance}")
-        other_user.balance_display = print(f"User: {other_user.name}, Balance: ${other_user.account_balance}")
+        other_Customer.account_balance += amount
+        self.balance_display = print(f"Customer: {self.name}, Balance: ${self.account_balance}")
+        other_Customer.balance_display = print(f"Customer: {other_Customer.name}, Balance: ${other_Customer.account_balance}")
         return self
-    #have this method decrease the user's balance by the amount and add that amount to other other_user's balance
+    #have this method decrease the Customer's balance by the amount and add that amount to other other_Customer's balance
 """   
 
 """
