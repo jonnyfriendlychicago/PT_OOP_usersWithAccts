@@ -13,12 +13,11 @@ class Customer:
 
     """below method is invoked by various transactions.  It basically prints the type of transaction that is being initiated."""
     def transTypeAffirmation (self, transType):
-        print(f"New {transType} initiated.")
+        print(f"New {transType} initiated.") ## I'm assuming that i'll want to change these words/format/etc 1,000 times.  having the text as a repeated call resolve that. 
 
     """below method prints vital elements of the customer object.  This is invoked by virtually all downstream calls.  
     It affirms which customer is being affected by an activity (like a deposit) """
     def customerAffirmation (self):
-        # self.acct_num = acct_num
         print(f"Customer Num: {self.cust_num} | Customer Name: {self.name} | Email: {self.email}")
     
     """ below method initiates the customerAccount object.  read comments therein for various descriptive detail"""
@@ -30,14 +29,44 @@ class Customer:
         # jrf note to self: here create a bunch of fields for the customer, and set to "", to be populated with downstream calls. 
         """ this accountList list below is SUPER IMPORTANT: it's what enables the entire organization of separate/distinct/callable bank accounts"""
         self.accountList = [] # this shall be an list of all **account** objects (dictionaries) that shall be created/associated to this cust.  VI: list is on the object, not on the overall class
-        """ one more time: accountList above... super important!  write it on your hand with a pen if you need to."""
         self.transactionHeader()
-        transType = "Customer Account"
-        # self.transTypeAffirmation(transType) # this code is fine, but not what I want it to be for right now, so leave out for now.
+        # transType = "Customer Account" # this code is fine, but not what I want it to be for right now, so leave out for now.
+        # self.transTypeAffirmation(transType) 
         print(f"New Customer Account created.") # this msg affirms in terminal that attempt was successful. 
         self.customerAffirmation()
         self.transactionFooter()
     
+    """ inserting new method here, trying to view account objects!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"""
+    def displayAllFinancialAccount (self): 
+        # print(f"below is print(self.accountList)")
+        # print(self.accountList)
+        for accountObject in self.accountList: 
+            print(accountObject)
+            print(f"accountObject.acct_num = {accountObject.acct_num}") 
+        
+        # for accountObject in range(0, len(self.accountList)): 
+        #     output = ""
+        #     for k,v in accountObject.items():
+        #         output += f"{k} - {v},"
+        #         print(output)
+""" check out below... WIP"""
+        def f05(d): 
+    print("f05")
+    for i in range (0, len(d)):
+        output = ""
+        for k, v in d[i].items(): 
+            output += (f"{k} - {v}, ")
+        print(output)
+
+    """
+    def iterate_dictionary(list):
+        for i in range(0, len(list)):
+            output = ""
+            for key,val in list[i].items():
+                output += f" {key} - {val},"
+            print(output)
+    """
+
     """below method initiates the init method on the BankAccount class, thereby creating a financialAccount object, specifically joined to a Customer account object.  it is invoked by this call: 
     a1.createFinancialAccount("Checking", 123)    """
     def createFinancialAccount (self, acct_type, acct_num):
@@ -62,6 +91,7 @@ class Customer:
     def make_deposit(self, acct_num, amount):
         #self.accountList = []
         # [BankAcct1, BankAcct2]
+        displayAmount = "{:,}".format(amount) # this is a display variable, so that amounts are displayed with commas.  do this throughout the script, not just here. 
         self.transactionHeader()
         transType = "deposit"
         self.transTypeAffirmation(transType)
@@ -71,20 +101,13 @@ class Customer:
                 # JRF note to self: would like to have additional logic above that validates both the Customer as well as the account number, but not 100% sure that's needed
                 accountFound = True # we found the account!  so, we set the var = True.  that way, the "not found" error message never gets invoked, see couple lines down. 
                 self.customerAffirmation()
+                """ below is what makes the magic happen; it's saying: run the deposit method ON THIS accountObject"""
                 accountObject.deposit(acct_num, amount)
-        displayAmount = "{:,}".format(amount) # this is a display variable, so that amounts are displayed with commas.  do this throughout the script, not just here. 
         if accountFound == False: #this only occurs if no accountObject located in the forLoop above
             print(f"Deposit failed: cannot locate account number: {acct_num}.  ${displayAmount} deposit has not occurred.")
+        # print(f"below is print(self.accountList)")
+        # print(self.accountList)
         self.transactionFooter()
-
-        # else: 
-        #     print("Account Number provided in invalid.")
-        # self.acct_num = acct_num
-        
-        # print(f"self.account.balance: {self.account.balance}")
-        # print('looking at the Customer account(s)')
-        # print(self.account.acct_type)
-        # print(self.account.acct_num)
         return self
 
 class BankAccount:
@@ -138,6 +161,9 @@ a1.createFinancialAccount("Savings", 987)
 a1.make_deposit(987, 100)
 a1.make_deposit(313, 10_000_000) #this account doesn't exist / won't exist.  this shows what happens when you send an acct_num that hasn't been created yet. 
 
+a1.displayAllFinancialAccount()
+
+"""
 a2 = Customer("DEF", "Dusty Bottoms", "dusty@3amigos.com")
 a2.createFinancialAccount("Checking", 219) # this big list of accounts shows how you can create wide range of accounts. 
 a2.createFinancialAccount("Savings", 924)
@@ -147,9 +173,13 @@ a2.createFinancialAccount("Checking", 847)
 a2.make_deposit(219, 1000)
 a2.make_deposit(219, 5000)
 
+
+
 a3 = Customer("GHI", "Ned Nederlander", "ned@3amigos.com")
 # no other tests for a3 yet, we good for now.
+"""
 
+# print(Customer.accountList)
 """
 All of below is more stuff I want to get back to!!!!!!!! - JRF 2022.02.18
 
