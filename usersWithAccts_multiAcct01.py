@@ -1,71 +1,85 @@
 """There are two classes in this script: Customer and BankAccount.  """
 
 class Customer:
-    # bank_name = "First National Dojo"
-    # all_accounts = []
+    custAccountList = [] # this list gets created upon script run; THEN, we append Customer objects into it, for review/display/validation later. zi9546
 
     """ below methods are mere print text, to diplay in terminal, for viewer ease.  These two methods are called upon by all downstread methods """
-    def transactionHeader (self):
+    def transactionHeader(self):
+        print("\\\Transaction Begin ---------------------- \\\ ")
+
+    def classTransactionHeader():
         print("\\\Transaction Begin ---------------------- \\\ ")
 
     def transactionFooter (self):
         print("// ---------------------- Transaction End  //")
 
+    def classTransactionFooter():
+        print("// ---------------------- Transaction End  //")
+
     """below method is invoked by various transactions.  It basically prints the type of transaction that is being initiated."""
+    ## I'm assuming that i'll want to change these words/format/etc 1,000 times.  having the text as a repeated call resolve that. 
     def transTypeAffirmation (self, transType):
-        print(f"New {transType} initiated.") ## I'm assuming that i'll want to change these words/format/etc 1,000 times.  having the text as a repeated call resolve that. 
+        print(f"{transType} initiated.") 
 
     """below method prints vital elements of the customer object.  This is invoked by virtually all downstream calls.  
     It affirms which customer is being affected by an activity (like a deposit) """
     def customerAffirmation (self):
         print(f"Customer Num: {self.cust_num} | Customer Name: {self.name} | Email: {self.email}")
     
-    """ below method initiates the customerAccount object.  read comments therein for various descriptive detail"""
+    """ below method initiates the customerAccount object.  read comments therein for further detail"""
     def __init__(self, cust_num, name, email):
         # JRF note to self: here we should have some error checking logic: if cust_num or email already exists, send error message.  this will require reactivation of the "All_accounts = []" list, I think
         self.cust_num = cust_num
         self.name = name
         self.email = email
         # jrf note to self: here create a bunch of fields for the customer, and set to "", to be populated with downstream calls. 
-        """ this accountList list below is SUPER IMPORTANT: it's what enables the entire organization of separate/distinct/callable bank accounts"""
-        self.accountList = [] # this shall be an list of all **account** objects (dictionaries) that shall be created/associated to this cust.  VI: list is on the object, not on the overall class
+        """ this "finAccountList" list below is SUPER IMPORTANT: it's what enables the entire organization of separate/distinct/callable bank accounts"""
+        self.finAccountList = [] # this shall be an list of all **account** objects (dictionaries) that shall be created/associated to this customer object.  list is on the object, not on the overall class
         self.transactionHeader()
-        # transType = "Customer Account" # this code is fine, but not what I want it to be for right now, so leave out for now.
+        # transType = "New Customer Account" # this code is fine, but not what I want it to be for right now, so leave out for now.
         # self.transTypeAffirmation(transType) 
+        Customer.custAccountList.append(self)
         print(f"New Customer Account created.") # this msg affirms in terminal that attempt was successful. 
         self.customerAffirmation()
         self.transactionFooter()
     
-    """ inserting new method here, trying to view account objects!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"""
-    def displayAllFinancialAccount (self): 
-        # print(f"below is print(self.accountList)")
-        # print(self.accountList)
-        for accountObject in self.accountList: 
-            print(accountObject)
-            print(f"accountObject.acct_num = {accountObject.acct_num}") 
-        
-        # for accountObject in range(0, len(self.accountList)): 
-        #     output = ""
-        #     for k,v in accountObject.items():
-        #         output += f"{k} - {v},"
-        #         print(output)
-""" check out below... WIP"""
-        def f05(d): 
-    print("f05")
-    for i in range (0, len(d)):
-        output = ""
-        for k, v in d[i].items(): 
-            output += (f"{k} - {v}, ")
-        print(output)
 
-    """
-    def iterate_dictionary(list):
-        for i in range(0, len(list)):
-            output = ""
-            for key,val in list[i].items():
-                output += f" {key} - {val},"
-            print(output)
-    """
+    @classmethod
+    def displayAllCustomerAccount(cls):
+        cls.classTransactionHeader()
+        for account in cls.custAccountList:
+            print(f"yo' valuuu: {account.name}")
+            # account.display_account_info()
+        
+        cls.classTransactionFooter()
+
+    """ below displays customer info and various views of the customer accounts"""
+    def displayAllFinancialAccount (self): 
+        self.transactionHeader()
+        print(f"Customer-plus-accts summary")
+        self.customerAffirmation()
+        
+        """ below will print out a dictionary-format of the dictionary items in finAccountList"""
+        print(f"Printing the Dictionary")
+        for accountObject in self.finAccountList:     
+            print(f"{(accountObject.__dict__)}")  
+        
+        """below works to print out known variables by specifically calling for them"""
+        print(f"printing dict objects, value-by-value")
+        print(f"Customer Account Summary:")
+        self.customerAffirmation()
+        print(f"Financial Accounts:")
+        for accountObject in self.finAccountList: 
+            print(f" Account Num: {accountObject.acct_num}\n  Account Type: {accountObject.acct_type}\n  Interest Rate: {accountObject.int_rate_display}%\n  Current Balance: ${accountObject.balance}") 
+
+        """ below is attempt to iterate through above... and it works!  puts them all in a vert list, but it works!"""
+        print(f"Iterating thru the object dictionaries")
+        for accountObject in self.finAccountList: 
+            print (f"Account Details:")
+            x = (accountObject.__dict__)
+            for k,v in x.items():
+                print (f"   {k}: {v}")
+        self.transactionFooter()
 
     """below method initiates the init method on the BankAccount class, thereby creating a financialAccount object, specifically joined to a Customer account object.  it is invoked by this call: 
     a1.createFinancialAccount("Checking", 123)    """
@@ -75,13 +89,13 @@ class Customer:
         JRF note to self: get some if/else stuff to see if acctNumb already exists, and errror if so. also, if type is not checking or savings, that should error also.  
         """
         self.transactionHeader()
-        transType = "Financial Account"
+        transType = "New Financial Account"
         self.transTypeAffirmation(transType)
         self.customerAffirmation()
         # my_acct = BankAccount(acct_type, acct_num, balance=0) # establishes 'my_acct' as var for class-init function for BankAccount 
         my_acct = BankAccount(acct_type, acct_num) # establishes 'my_acct' as var for class-init function for BankAccount 
-        self.accountList.append(my_acct)    # accomplishes two things in one action: 
-                                                #(1) this adds the about-to-be-created instance/object to the accountList list that exists for this customer acct 
+        self.finAccountList.append(my_acct)    # accomplishes two things in one action: 
+                                                #(1) this adds the about-to-be-created instance/object to the finAccountList list that exists for this customer acct 
                                                 #(2) inherently runs that class-init function, using the var pushed into in from the call.  see init function in the BankAccount class code further in script. 
         self.transactionFooter()
         return self
@@ -89,14 +103,14 @@ class Customer:
     """below method does not create an object; rather, it initiates the deposit method that exists within the BankAccount class.  see bankAccount class code further in script. 
     """
     def make_deposit(self, acct_num, amount):
-        #self.accountList = []
+        #self.finAccountList = []
         # [BankAcct1, BankAcct2]
         displayAmount = "{:,}".format(amount) # this is a display variable, so that amounts are displayed with commas.  do this throughout the script, not just here. 
         self.transactionHeader()
-        transType = "deposit"
+        transType = "New Deposit"
         self.transTypeAffirmation(transType)
         accountFound = False # accountFound is an internal variable, set to False at start.  In other words, we start by saying the account can't be found, then update the var if/when it is found
-        for accountObject in self.accountList: 
+        for accountObject in self.finAccountList: 
             if accountObject.acct_num == acct_num:
                 # JRF note to self: would like to have additional logic above that validates both the Customer as well as the account number, but not 100% sure that's needed
                 accountFound = True # we found the account!  so, we set the var = True.  that way, the "not found" error message never gets invoked, see couple lines down. 
@@ -105,8 +119,8 @@ class Customer:
                 accountObject.deposit(acct_num, amount)
         if accountFound == False: #this only occurs if no accountObject located in the forLoop above
             print(f"Deposit failed: cannot locate account number: {acct_num}.  ${displayAmount} deposit has not occurred.")
-        # print(f"below is print(self.accountList)")
-        # print(self.accountList)
+        # print(f"below is print(self.finAccountList)")
+        # print(self.finAccountList)
         self.transactionFooter()
         return self
 
@@ -124,7 +138,7 @@ class BankAccount:
         self.acct_num = acct_num
         print(f"Current balance is ${self.balance} with a current interest rate of {self.int_rate_display}%.")
     
-    """ below is invoked by the deposit method """
+    """ below is invoked by the deposit/withdrawl/etc method """
     def accountBalance (self, acct_num):
         self.acct_num = acct_num
         print(f"Account Balance: ${self.balance}")
@@ -161,12 +175,17 @@ a1.createFinancialAccount("Savings", 987)
 a1.make_deposit(987, 100)
 a1.make_deposit(313, 10_000_000) #this account doesn't exist / won't exist.  this shows what happens when you send an acct_num that hasn't been created yet. 
 
+a2 = Customer("DEF", "Dusty Bottoms", "dusty@3amigos.com")
+a2.createFinancialAccount("Savings", 924)
+
 a1.displayAllFinancialAccount()
 
+Customer.displayAllCustomerAccount()
+
 """
-a2 = Customer("DEF", "Dusty Bottoms", "dusty@3amigos.com")
+
 a2.createFinancialAccount("Checking", 219) # this big list of accounts shows how you can create wide range of accounts. 
-a2.createFinancialAccount("Savings", 924)
+
 a2.createFinancialAccount("Savings", 376)
 a2.createFinancialAccount("Checking", 773)
 a2.createFinancialAccount("Checking", 847)
@@ -179,7 +198,7 @@ a3 = Customer("GHI", "Ned Nederlander", "ned@3amigos.com")
 # no other tests for a3 yet, we good for now.
 """
 
-# print(Customer.accountList)
+# print(Customer.finAccountList)
 """
 All of below is more stuff I want to get back to!!!!!!!! - JRF 2022.02.18
 
@@ -237,7 +256,7 @@ All of below is more stuff I want to get back to!!!!!!!! - JRF 2022.02.18
 # print(a1.account)
 
 
-# print(a1.accountList)
+# print(a1.finAccountList)
 """
 
 
@@ -252,9 +271,9 @@ All of below is more stuff I want to get back to!!!!!!!! - JRF 2022.02.18
 
 
 """
-# print(a1.accountList[0].balance)
+# print(a1.finAccountList[0].balance)
 
-for account in a1.accountList:
+for account in a1.finAccountList:
     print(f'This is my account type: {account.acct_type}')
     print(f'This is my account number: {account.acct_num}')
     print(f'This is my account balance: {account.balance}')
