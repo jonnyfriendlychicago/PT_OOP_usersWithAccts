@@ -3,6 +3,8 @@
 class Customer:
     custAccountList = [] # this list gets created upon script run; THEN, we append Customer objects into it, for review/display/validation later. zi9546
 
+    # custIDlist = []
+
     """ below methods are mere print text, to diplay in terminal, for viewer ease.  These two methods are called upon by all downstread methods """
     def transactionHeader(self):
         print("\\\Transaction Begin ---------------------- \\\ ")
@@ -38,27 +40,47 @@ class Customer:
         self.transactionHeader()
         # transType = "New Customer Account" # this code is fine, but not what I want it to be for right now, so leave out for now.
         # self.transTypeAffirmation(transType) 
-        Customer.custAccountList.append(self)
+        Customer.custAccountList.append(self) # this adds the customer object to the custAccountList list, so that the object can be output in dictionary-style format. 
         print(f"New Customer Account created.") # this msg affirms in terminal that attempt was successful. 
         self.customerAffirmation()
         self.transactionFooter()
+        # if not custIDlist 
+        # self.customerID 
+    """ below method will display all customer accounts and vital stats about each customer account"""
     
-
     @classmethod
     def displayAllCustomerAccount(cls):
         cls.classTransactionHeader()
-        for account in cls.custAccountList:
-            print(f"yo' valuuu: {account.name}")
-            # account.display_account_info()
+        print(f"Customer Accounts Read-out")
         
+        """below works to print out known variables by specifically calling for them"""
+        print(f"printing dict objects, value-by-value")
+        for customerAccount in cls.custAccountList:
+            print(f"Customer Name: {customerAccount.name}")
+            # account.display_account_info()  
+        
+        """ below will print out a dictionary-format of the dictionary items in custAccountList"""
+        print(f"Printing the customer obj Dictionary")
+        for customerAccount in cls.custAccountList:     
+            print(f"{(customerAccount.__dict__)}")  
+        
+        """ below is attempt to iterate through above... and it works!  puts them all in a vert list, but it works!"""
+        print(f"Iterating thru the object dictionaries")
+        for customerAccount in cls.custAccountList: 
+            print (f"Account Details:")
+            x = (customerAccount.__dict__)
+            for k,v in x.items():
+                print (f"   {k}: {v}")
         cls.classTransactionFooter()
 
-    """ below displays customer info and various views of the customer accounts"""
+    """ below displays customer info the finAccount data of a specifically-called-upon customer account"""
     def displayAllFinancialAccount (self): 
         self.transactionHeader()
-        print(f"Customer-plus-accts summary")
+        print(f"Customer / Financial Accounts Affirmation")
+        print(f"Customer Account Summary:")
         self.customerAffirmation()
-        
+        print(f"Financial Accounts:")
+
         """ below will print out a dictionary-format of the dictionary items in finAccountList"""
         print(f"Printing the Dictionary")
         for accountObject in self.finAccountList:     
@@ -66,9 +88,6 @@ class Customer:
         
         """below works to print out known variables by specifically calling for them"""
         print(f"printing dict objects, value-by-value")
-        print(f"Customer Account Summary:")
-        self.customerAffirmation()
-        print(f"Financial Accounts:")
         for accountObject in self.finAccountList: 
             print(f" Account Num: {accountObject.acct_num}\n  Account Type: {accountObject.acct_type}\n  Interest Rate: {accountObject.int_rate_display}%\n  Current Balance: ${accountObject.balance}") 
 
@@ -93,10 +112,8 @@ class Customer:
         self.transTypeAffirmation(transType)
         self.customerAffirmation()
         # my_acct = BankAccount(acct_type, acct_num, balance=0) # establishes 'my_acct' as var for class-init function for BankAccount 
-        my_acct = BankAccount(acct_type, acct_num) # establishes 'my_acct' as var for class-init function for BankAccount 
-        self.finAccountList.append(my_acct)    # accomplishes two things in one action: 
-                                                #(1) this adds the about-to-be-created instance/object to the finAccountList list that exists for this customer acct 
-                                                #(2) inherently runs that class-init function, using the var pushed into in from the call.  see init function in the BankAccount class code further in script. 
+        my_acct = BankAccount(acct_type, acct_num) # establishes 'my_acct' as var for class-init function for BankAccount... and inherently runs that class-init function, using the var pushed into in from the call.  see init function in the BankAccount class code further in script. 
+        self.finAccountList.append(my_acct)    #this adds the about-to-be-created instance/object to the finAccountList list that exists for this customer acct 
         self.transactionFooter()
         return self
 
