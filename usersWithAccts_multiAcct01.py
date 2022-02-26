@@ -2,8 +2,14 @@
 
 class Customer:
     custAccountList = [] # this list gets created upon script run; THEN, we append Customer objects into it, for review/display/validation later. zi9546
+    customerSeqNumList = [] # this list is used to autonumber the customerSeqNum values getting pushed into the customer object 
+    customerEmailList = [] # similar to the customerSeqNum list; except, this is used to validate existing email values, and error if dupe incoming. 
 
-    # custIDlist = []
+    def generateNewCustAcctNum(self): #(n):
+        from random import randint
+        range_start = 11111 # 10**(n-1)
+        range_end = 99999 #(10**n)-1
+        self.custNum2 = randint(range_start, range_end)
 
     """ below methods are mere print text, to diplay in terminal, for viewer ease.  These two methods are called upon by all downstread methods """
     def transactionHeader(self):
@@ -29,25 +35,33 @@ class Customer:
         print(f"Customer Num: {self.cust_num} | Customer Name: {self.name} | Email: {self.email}")
     
     """ below method initiates the customerAccount object.  read comments therein for further detail"""
-    def __init__(self, cust_num, name, email):
+    def __init__(self, name, email):
         # JRF note to self: here we should have some error checking logic: if cust_num or email already exists, send error message.  this will require reactivation of the "All_accounts = []" list, I think
-        self.cust_num = cust_num
-        self.name = name
-        self.email = email
-        # jrf note to self: here create a bunch of fields for the customer, and set to "", to be populated with downstream calls. 
-        """ this "finAccountList" list below is SUPER IMPORTANT: it's what enables the entire organization of separate/distinct/callable bank accounts"""
-        self.finAccountList = [] # this shall be an list of all **account** objects (dictionaries) that shall be created/associated to this customer object.  list is on the object, not on the overall class
         self.transactionHeader()
-        # transType = "New Customer Account" # this code is fine, but not what I want it to be for right now, so leave out for now.
-        # self.transTypeAffirmation(transType) 
-        Customer.custAccountList.append(self) # this adds the customer object to the custAccountList list, so that the object can be output in dictionary-style format. 
-        print(f"New Customer Account created.") # this msg affirms in terminal that attempt was successful. 
-        self.customerAffirmation()
+        if email in Customer.customerEmailList: 
+            print(f"Customer record not created.  Customer email {email} exists on an account already.")
+        else: 
+            self.generateNewCustAcctNum()
+            self.cust_num = self.custNum2
+            self.name = name
+            self.email = email # jrf note to self: here create a bunch of fields for the customer, and set to "", to be populated with downstream calls. 
+            """ this "finAccountList" list below is SUPER IMPORTANT: it's what enables the entire organization of separate/distinct/callable bank accounts"""
+            self.finAccountList = [] # this shall be an list of all **account** objects (dictionaries) that shall be created/associated to this customer object.  list is on the object, not on the overall class    
+            # transType = "New Customer Account" # this code is fine, but not what I want it to be for right now, so leave out for now.
+            # self.transTypeAffirmation(transType) 
+            print(f"New Customer Account created.") # this msg affirms in terminal that attempt was successful. 
+            self.customerAffirmation()
+            if not Customer.customerSeqNumList: # this entire if/else below is autoincrementing the customerSeqNum, starting at 1
+                self.customerSeqNum = 1
+                Customer.customerSeqNumList.append(self.customerSeqNum)
+            else: 
+                self.customerSeqNum = max(Customer.customerSeqNumList) + 1
+            Customer.customerEmailList.append(self.email)
+            Customer.custAccountList.append(self) # this adds the customer object to the custAccountList list, so that the object can be output in dictionary-style format. 
+            
         self.transactionFooter()
-        # if not custIDlist 
-        # self.customerID 
+
     """ below method will display all customer accounts and vital stats about each customer account"""
-    
     @classmethod
     def displayAllCustomerAccount(cls):
         cls.classTransactionHeader()
@@ -56,7 +70,7 @@ class Customer:
         """below works to print out known variables by specifically calling for them"""
         print(f"printing dict objects, value-by-value")
         for customerAccount in cls.custAccountList:
-            print(f"Customer Name: {customerAccount.name}")
+            print(f" customerSeqNum: {customerAccount.customerSeqNum}\n  Customer Name: {customerAccount.name}\n  Customer Num: {customerAccount.cust_num}\n  Email: {customerAccount.email}")
             # account.display_account_info()  
         
         """ below will print out a dictionary-format of the dictionary items in custAccountList"""
@@ -184,18 +198,18 @@ class BankAccount:
 
 # BankAccount.print_all_accounts()
 
-a1 = Customer("ABC", "Lucky Day", "lucky@3amigos.com")
+a1 = Customer("Lucky Day", "lucky@3amigos.com")
 a1.createFinancialAccount("Checking", 123)
-a1.make_deposit(123, 1)
-a1.make_deposit(123, 2)
-a1.createFinancialAccount("Savings", 987)
-a1.make_deposit(987, 100)
-a1.make_deposit(313, 10_000_000) #this account doesn't exist / won't exist.  this shows what happens when you send an acct_num that hasn't been created yet. 
+# a1.make_deposit(123, 1)
+# a1.make_deposit(123, 2)
+# a1.createFinancialAccount("Savings", 987)
+# a1.make_deposit(987, 100)
+# a1.make_deposit(313, 10_000_000) #this account doesn't exist / won't exist.  this shows what happens when you send an acct_num that hasn't been created yet. 
 
-a2 = Customer("DEF", "Dusty Bottoms", "dusty@3amigos.com")
-a2.createFinancialAccount("Savings", 924)
+a2 = Customer("Dusty Bottoms", "lucky@3amigos.com")
+# a2.createFinancialAccount("Savings", 924)
 
-a1.displayAllFinancialAccount()
+# a1.displayAllFinancialAccount()
 
 Customer.displayAllCustomerAccount()
 
