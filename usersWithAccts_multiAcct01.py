@@ -200,11 +200,11 @@ class BankAccount:
 
 a1 = Customer("Lucky Day", "lucky@3amigos.com")
 a1.createFinancialAccount("Checking", 123)
-# a1.make_deposit(123, 1)
-# a1.make_deposit(123, 2)
+a1.make_deposit(123, 1)
+a1.make_deposit(123, 2)
 # a1.createFinancialAccount("Savings", 987)
 # a1.make_deposit(987, 100)
-# a1.make_deposit(313, 10_000_000) #this account doesn't exist / won't exist.  this shows what happens when you send an acct_num that hasn't been created yet. 
+a1.make_deposit(313, 10_000_000) #this account doesn't exist / won't exist.  this shows what happens when you send an acct_num that hasn't been created yet. 
 
 a2 = Customer("Dusty Bottoms", "lucky@3amigos.com")
 # a2.createFinancialAccount("Savings", 924)
